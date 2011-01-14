@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite failures="0" time="0.03" errors="0" skipped="0" tests="11" name="com.cp.LexerTest">
+  <properties>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk1.6.0_17\jre\bin"/>
+    <property name="java.vm.version" value="14.3-b01"/>
+    <property name="java.vm.vendor" value="Sun Microsystems Inc."/>
+    <property name="java.vendor.url" value="http://java.sun.com/"/>
+    <property name="path.separator" value=";"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) Client VM"/>
+    <property name="file.encoding.pkg" value="sun.io"/>
+    <property name="user.country" value="DE"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="user.dir" value="C:\Users\nwi\Projekte\Workspaces\CompilerWorkspace\CompilerProject"/>
+    <property name="java.runtime.version" value="1.6.0_17-b04"/>
+    <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment"/>
+    <property name="basedir" value="C:\Users\nwi\Projekte\Workspaces\CompilerWorkspace\CompilerProject"/>
+    <property name="java.endorsed.dirs" value="C:\Program Files\Java\jdk1.6.0_17\jre\lib\endorsed"/>
+    <property name="os.arch" value="x86"/>
+    <property name="surefire.real.class.path" value="C:\Users\nwi\AppData\Local\Temp\surefirebooter3262998666040933317.jar"/>
+    <property name="java.io.tmpdir" value="C:\Users\nwi\AppData\Local\Temp\"/>
+    <property name="line.separator" value="
+"/>
+    <property name="java.vm.specification.vendor" value="Sun Microsystems Inc."/>
+    <property name="user.variant" value=""/>
+    <property name="os.name" value="Windows 7"/>
+    <property name="sun.jnu.encoding" value="Cp1252"/>
+    <property name="java.library.path" value="C:\Program Files\Java\jdk1.6.0_17\jre\bin;.;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;C:\Program Files\Common Files\Microsoft Shared\Windows Live;C:\Program Files\PC Connectivity Solution\;C:\Program Files\MiKTeX 2.8\miktex\bin;C:\Program Files\Java\JavaFX\javafx-sdk1.2\bin;C:\Program Files\Java\JavaFX\javafx-sdk1.2\emulator\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files\Toshiba\Bluetooth Toshiba Stack\sys\;C:\Program Files\Subversion\bin;C:\Program Files\TortoiseSVN\bin;C:\Program Files\Java\apache-maven-2.2.1\bin;C:\Program Files\Java\scala-2.7.7.final\bin;C:\Program Files\MySQL\MySQL Server 5.1\bin;C:\Program Files\Common Files\DivX Shared\;C:\Program Files\Java\Groovy\Groovy-1.7.0\bin;C:\Program Files\Java\jdk1.6.0_17\\bin;C:\program files\erl5.7.5\bin;C:\Program Files\Java\jython-2.5.2b2\bin;C:\cygwin;C:\Program Files\QuickTime\QTSystem\;C:\Program Files\httrack-noinst-3.42-2\httrack;C:\Program Files\Common Files\Microsoft Shared\Windows Live"/>
+    <property name="surefire.test.class.path" value="C:\Users\nwi\Projekte\Workspaces\CompilerWorkspace\CompilerProject\target\test-classes;C:\Users\nwi\Projekte\Workspaces\CompilerWorkspace\CompilerProject\target\classes;C:\Users\nwi\.m2\repository\asm\asm\3.3\asm-3.3.jar;C:\Users\nwi\.m2\repository\jasmin\jasmin\2.4\jasmin-2.4.jar;C:\Users\nwi\.m2\repository\junit\junit\4.5\junit-4.5.jar;"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.class.version" value="50.0"/>
+    <property name="sun.management.compiler" value="HotSpot Client Compiler"/>
+    <property name="os.version" value="6.1"/>
+    <property name="user.home" value="C:\Users\nwi"/>
+    <property name="user.timezone" value=""/>
+    <property name="java.awt.printerjob" value="sun.awt.windows.WPrinterJob"/>
+    <property name="java.specification.version" value="1.6"/>
+    <property name="file.encoding" value="Cp1252"/>
+    <property name="user.name" value="nwi"/>
+    <property name="java.class.path" value="C:\Users\nwi\Projekte\Workspaces\CompilerWorkspace\CompilerProject\target\test-classes;C:\Users\nwi\Projekte\Workspaces\CompilerWorkspace\CompilerProject\target\classes;C:\Users\nwi\.m2\repository\asm\asm\3.3\asm-3.3.jar;C:\Users\nwi\.m2\repository\jasmin\jasmin\2.4\jasmin-2.4.jar;C:\Users\nwi\.m2\repository\junit\junit\4.5\junit-4.5.jar;"/>
+    <property name="java.vm.specification.version" value="1.0"/>
+    <property name="sun.arch.data.model" value="32"/>
+    <property name="java.home" value="C:\Program Files\Java\jdk1.6.0_17\jre"/>
+    <property name="java.specification.vendor" value="Sun Microsystems Inc."/>
+    <property name="user.language" value="de"/>
+    <property name="awt.toolkit" value="sun.awt.windows.WToolkit"/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="java.version" value="1.6.0_17"/>
+    <property name="java.ext.dirs" value="C:\Program Files\Java\jdk1.6.0_17\jre\lib\ext;C:\Windows\Sun\Java\lib\ext"/>
+    <property name="sun.boot.class.path" value="C:\Program Files\Java\jdk1.6.0_17\jre\lib\resources.jar;C:\Program Files\Java\jdk1.6.0_17\jre\lib\rt.jar;C:\Program Files\Java\jdk1.6.0_17\jre\lib\sunrsasign.jar;C:\Program Files\Java\jdk1.6.0_17\jre\lib\jsse.jar;C:\Program Files\Java\jdk1.6.0_17\jre\lib\jce.jar;C:\Program Files\Java\jdk1.6.0_17\jre\lib\charsets.jar;C:\Program Files\Java\jdk1.6.0_17\jre\classes"/>
+    <property name="java.vendor" value="Sun Microsystems Inc."/>
+    <property name="localRepository" value="C:\Users\nwi\.m2\repository"/>
+    <property name="file.separator" value="\"/>
+    <property name="java.vendor.url.bug" value="http://java.sun.com/cgi-bin/bugreport.cgi"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="sun.desktop" value="windows"/>
+    <property name="sun.cpu.isalist" value="pentium_pro+mmx pentium_pro pentium+mmx pentium i486 i386 i86"/>
+  </properties>
+  <testcase time="0.001" classname="com.cp.LexerTest" name="test_test"/>
+  <testcase time="0" classname="com.cp.LexerTest" name="test_arithmetic_expr_01"/>
+  <testcase time="0" classname="com.cp.LexerTest" name="test_arithmetic_expr_02"/>
+  <testcase time="0.001" classname="com.cp.LexerTest" name="test_arithmetic_expr_03"/>
+  <testcase time="0.001" classname="com.cp.LexerTest" name="test_arithmetic_expr_04"/>
+  <testcase time="0.001" classname="com.cp.LexerTest" name="test_arithmetic_expr_05"/>
+  <testcase time="0" classname="com.cp.LexerTest" name="test_arithmetic_expr_06"/>
+  <testcase time="0" classname="com.cp.LexerTest" name="test_arithmetic_expr_07"/>
+  <testcase time="0" classname="com.cp.LexerTest" name="test_arithmetic_expr_08"/>
+  <testcase time="0.001" classname="com.cp.LexerTest" name="test_arithmetic_expr_09"/>
+  <testcase time="0.001" classname="com.cp.LexerTest" name="test_arithmetic_expr_10"/>
+</testsuite>

@@ -1,0 +1,25 @@
+
+programm 	-> declarations [output] EOF
+
+declarations-> declaration declarations
+			-> eps
+
+declaration -> 'val' ID ':=' expr
+
+expr 		-> term {termRest}
+
+termRest	-> + term
+			-> - term
+			-> eps
+			
+term		-> factor {factorRest}
+
+factorRest	-> * factor
+			-> / factor
+			-> eps
+			
+factor		-> LPAREN expr RPAREN
+			-> ID
+			-> NUM
+			
+output		-> OUT expr

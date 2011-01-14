@@ -1,0 +1,11 @@
+fun foo(a, b, c):
+	val x := 7
+	val y := x + a + b + c
+	y;
+	
+val a := 2
+val b := 3
+val c := 4
+val z := foo(a,b,c)
+
+out z
