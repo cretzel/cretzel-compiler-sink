@@ -2,12 +2,17 @@ package com.cp.ast.visitor;
 
 import com.cp.ast.nodes.AssignmentAstNode;
 import com.cp.ast.nodes.BinaryAstNode;
+import com.cp.ast.nodes.BlockAstNode;
 import com.cp.ast.nodes.DeclarationAstNode;
 import com.cp.ast.nodes.DeclarationsAstNode;
 import com.cp.ast.nodes.ErroneousAstNode;
+import com.cp.ast.nodes.FunctionDeclarationAstNode;
+import com.cp.ast.nodes.FunctionDeclarationsAstNode;
 import com.cp.ast.nodes.IdentifierAstNode;
+import com.cp.ast.nodes.MainAstNode;
 import com.cp.ast.nodes.NumberLiteralAstNode;
 import com.cp.ast.nodes.OutputAstNode;
+import com.cp.ast.nodes.ParameterAstNode;
 import com.cp.ast.nodes.ParenthesizedAstNode;
 import com.cp.ast.nodes.ProgramAstNode;
 
@@ -31,6 +36,17 @@ public interface SimpleVisitor {
 
 	void visitAssignment(AssignmentAstNode assignment);
 
-	void visitOutput(OutputAstNode outputAstNodeImpl);
+	void visitOutput(OutputAstNode output);
+
+	void visitBlock(BlockAstNode bloc);
+
+	void visitParameter(ParameterAstNode parameter);
+
+	void visitFunctionDeclaration(FunctionDeclarationAstNode functionDeclaration);
+
+	void visitFunctionDeclarations(
+			FunctionDeclarationsAstNode functionDeclarations);
+
+	void visitMain(MainAstNode main);
 
 }

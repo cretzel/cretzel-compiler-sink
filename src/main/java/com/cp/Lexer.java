@@ -71,7 +71,13 @@ public class Lexer {
 			return parseOperator();
 
 		case ':':
-			return parseAssignment();
+			return parseAssignmentOrColon();
+		case ';':
+			read();
+			return Token.SEMICOLON;
+		case ',':
+			read();
+			return Token.COMMA;
 
 		case '(':
 			read();
@@ -94,13 +100,14 @@ public class Lexer {
 				+ "'");
 	}
 
-	private Token parseAssignment() {
+	private Token parseAssignmentOrColon() {
 		if (lookahead == '=') {
 			read();
 			read();
 			return Token.ASSIGNMENT;
 		} else {
-			throw new RuntimeException("Assignment expected");
+			read();
+			return Token.COLON;
 		}
 	}
 
@@ -116,6 +123,9 @@ public class Lexer {
 		// Keywords
 		if ("val".equals(this.lexval)) {
 			return Token.VAL;
+		}
+		if ("fun".equals(this.lexval)) {
+			return Token.FUN;
 		}
 		if ("out".equals(this.lexval)) {
 			return Token.OUT;

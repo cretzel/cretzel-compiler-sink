@@ -4,31 +4,26 @@ import com.cp.ast.visitor.SimpleVisitor;
 
 public class ProgramAstNodeImpl extends AstNodeImpl implements ProgramAstNode {
 
-	private final OutputAstNode output;
-	private final DeclarationsAstNode declr;
+	private final MainAstNode main;
+	private final FunctionDeclarationsAstNode functionDeclarations;
 
-	public ProgramAstNodeImpl(DeclarationsAstNode declrAstNode,
-			OutputAstNode outputAstNode) {
-		this.output = outputAstNode;
-		this.declr = declrAstNode;
+	public ProgramAstNodeImpl(FunctionDeclarationsAstNode funDeclrs,
+			MainAstNode main) {
+		this.main = main;
+		this.functionDeclarations = funDeclrs;
+	}
+
+	public MainAstNode getMain() {
+		return main;
+	}
+
+	public FunctionDeclarationsAstNode getFunctionDeclarations() {
+		return functionDeclarations;
 	}
 
 	@Override
 	public Kind getKind() {
 		return Kind.PROGRAM;
-	}
-
-	public OutputAstNode getOutput() {
-		return output;
-	}
-
-	@Override
-	public boolean hasOutput() {
-		return output != null;
-	}
-
-	public DeclarationsAstNode getDeclr() {
-		return declr;
 	}
 
 	@Override

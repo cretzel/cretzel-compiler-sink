@@ -1,23 +1,48 @@
 package com.cp;
 
+import static com.cp.Token.ASSIGNMENT;
+import static com.cp.Token.DIV;
+import static com.cp.Token.EOF;
+import static com.cp.Token.FUN;
+import static com.cp.Token.ID;
+import static com.cp.Token.LPAREN;
+import static com.cp.Token.MINUS;
+import static com.cp.Token.MULT;
+import static com.cp.Token.NUM;
+import static com.cp.Token.PLUS;
+import static com.cp.Token.RPAREN;
+import static com.cp.Token.VAL;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import com.cp.ast.nodes.AssignmentAstNode;
 import com.cp.ast.nodes.AssignmentAstNodeImpl;
 import com.cp.ast.nodes.AstNodeImpl;
 import com.cp.ast.nodes.BinaryAstNodeImpl;
+import com.cp.ast.nodes.BlockAstNode;
+import com.cp.ast.nodes.BlockAstNodeImpl;
 import com.cp.ast.nodes.DeclarationAstNode;
 import com.cp.ast.nodes.DeclarationsAstNode;
 import com.cp.ast.nodes.DeclarationsAstNodeImpl;
 import com.cp.ast.nodes.ErroneousAstNodeImpl;
 import com.cp.ast.nodes.ExpressionAstNode;
+import com.cp.ast.nodes.FunctionDeclarationAstNode;
+import com.cp.ast.nodes.FunctionDeclarationAstNodeImpl;
+import com.cp.ast.nodes.FunctionDeclarationsAstNode;
+import com.cp.ast.nodes.FunctionDeclarationsAstNodeImpl;
 import com.cp.ast.nodes.IdentifierAstNode;
 import com.cp.ast.nodes.IdentifierAstNodeImpl;
+import com.cp.ast.nodes.MainAstNode;
+import com.cp.ast.nodes.MainAstNodeImpl;
 import com.cp.ast.nodes.NumberLiteralAstNodeImpl;
 import com.cp.ast.nodes.OutputAstNode;
 import com.cp.ast.nodes.OutputAstNodeImpl;
+import com.cp.ast.nodes.ParameterAstNode;
+import com.cp.ast.nodes.ParameterAstNodeImpl;
 import com.cp.ast.nodes.ParenthesizedAstNodeImpl;
 import com.cp.ast.nodes.ProgramAstNode;
 import com.cp.ast.nodes.ProgramAstNodeImpl;
-import static com.cp.Token.*;
 
 public class Parser {
 
@@ -41,7 +66,8 @@ public class Parser {
 		if (accept(token)) {
 			return true;
 		} else {
-			reportError("expect: unexpected symbol: " + token);
+			reportError("expected symbol " + token + ", but was "
+					+ lexer.token());
 			return false;
 		}
 	}
@@ -51,14 +77,20 @@ public class Parser {
 	}
 
 	/**
-	 * programm -> declarations [output] EOF
-	 * 
+	 * programm -> functionDeclarations main EOF
 	 */
 	private ProgramAstNode program() {
-		DeclarationsAstNode declrAstNode = declarations();
-		OutputAstNode outputAstNode = output();
+		FunctionDeclarationsAstNode funDeclrs = functionDeclarations();
+		MainAstNode main = main();
 		expect(EOF);
-		return new ProgramAstNodeImpl(declrAstNode, outputAstNode);
+		return new ProgramAstNodeImpl(funDeclrs, main);
+	}
+
+	private MainAstNode main() {
+		DeclarationsAstNode declarations = declarations();
+		OutputAstNode output = output();
+		return new MainAstNodeImpl(declarations, output);
+
 	}
 
 	private OutputAstNode output() {
@@ -71,6 +103,22 @@ public class Parser {
 		}
 
 		return null;
+	}
+
+	/**
+	 * declarations-> declaration declarations -> eps
+	 * 
+	 * @return
+	 */
+	private FunctionDeclarationsAstNode functionDeclarations() {
+		FunctionDeclarationsAstNode declrAstNode = new FunctionDeclarationsAstNodeImpl();
+
+		while (lexer.token() == FUN) {
+			declrAstNode.addDeclaration(functionDeclaration());
+		}
+
+		return declrAstNode;
+
 	}
 
 	/**
@@ -91,10 +139,24 @@ public class Parser {
 	}
 
 	/**
-	 * declaration -> ID ':=' expr
+	 * declaration -> variableDeclaration | functionDeclaration
 	 */
 	public DeclarationAstNode declaration() {
 
+		if (lexer.token() == VAL) {
+			return variableDeclaration();
+		} else if (lexer.token() == FUN) {
+			return functionDeclaration();
+		} else {
+			throw new RuntimeException(
+					"Expected variable or function declaration");
+		}
+	}
+
+	/**
+	 * variableDeclaration -> ID ':=' expr
+	 */
+	private AssignmentAstNode variableDeclaration() {
 		expect(VAL);
 		String lexval = lexer.lexval();
 		accept(ID);
@@ -105,6 +167,89 @@ public class Parser {
 		AssignmentAstNode assignmentAstNode = new AssignmentAstNodeImpl(
 				idAstNode, exprAstNode);
 		return assignmentAstNode;
+	}
+
+	/**
+	 * functionDeclaration -> FUN ID parameterList COLON block
+	 * 
+	 * block -> variableDeclarations expr SEMICOLON
+	 * 
+	 * @return
+	 */
+	private FunctionDeclarationAstNode functionDeclaration() {
+
+		expect(FUN);
+
+		String funId = lexer.lexval();
+		expect(ID);
+		IdentifierAstNode idAstNode = new IdentifierAstNodeImpl(funId);
+
+		List<ParameterAstNode> parameters = parameterList();
+
+		expect(Token.COLON);
+
+		BlockAstNode blockAstNode = block();
+
+		FunctionDeclarationAstNode funAstNode = new FunctionDeclarationAstNodeImpl(
+				idAstNode, parameters, blockAstNode);
+
+		return funAstNode;
+	}
+
+	/**
+	 * parameterList -> LPARENT ( RPAREN | parameters RPAREN)
+	 */
+	private List<ParameterAstNode> parameterList() {
+		expect(LPAREN);
+
+		if (lexer.token() == RPAREN) {
+			expect(RPAREN);
+			return new ArrayList<ParameterAstNode>();
+		} else {
+			List<ParameterAstNode> parameters = parameters();
+			expect(RPAREN);
+			return parameters;
+		}
+	}
+
+	/**
+	 * parameters -> ID (',' parameters)*
+	 */
+	private List<ParameterAstNode> parameters() {
+		List<ParameterAstNode> parameters = new ArrayList<ParameterAstNode>();
+
+		String parameterName = lexer.lexval();
+		expect(ID);
+		ParameterAstNode paramAstNode = new ParameterAstNodeImpl(parameterName);
+		parameters.add(paramAstNode);
+
+		while (lexer.token() == Token.COMMA) {
+			expect(Token.COMMA);
+			parameters.addAll(parameters());
+		}
+
+		return parameters;
+	}
+
+	/**
+	 * block -> variableDeclarations expr SEMICOLON
+	 * 
+	 * @return
+	 */
+	private BlockAstNode block() {
+
+		List<AssignmentAstNode> declarations = new ArrayList<AssignmentAstNode>();
+		while (lexer.token() == Token.VAL) {
+			AssignmentAstNode variableDeclaration = variableDeclaration();
+			declarations.add(variableDeclaration);
+		}
+
+		ExpressionAstNode expr = expr();
+
+		expect(Token.SEMICOLON);
+
+		BlockAstNode block = new BlockAstNodeImpl(declarations, expr);
+		return block;
 	}
 
 	/**

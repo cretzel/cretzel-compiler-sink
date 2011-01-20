@@ -1,25 +1,41 @@
 
-programm 	-> declarations [output] EOF
+programm 			-> functionDeclarations main EOF
 
-declarations-> declaration declarations
-			-> eps
+functionDeclarations -> functionDeclaration functionDeclarations
+					 -> eps
 
-declaration -> 'val' ID ':=' expr
+main				-> variableDeclarations [output] EOF
 
-expr 		-> term {termRest}
+variableDeclarations -> variableDeclaration variableDeclarations
+					 -> eps
 
-termRest	-> + term
-			-> - term
-			-> eps
+variableDeclaration -> VAL ID ':=' expr
+
+functionDeclaration -> FUN ID parameterList COLON block
+
+parameterList		-> LPARENT ( RPAREN | parameters RPAREN)
+
+parameters			-> ID (',' parameters)*
+
+block				-> variableDeclarations expr SEMICOLON
+
+variableDeclarations -> variableDeclaration variableDeclarations
+					 -> eps
+
+expr 				-> term {termRest}
+
+termRest			-> + term
+					-> - term
+					-> eps
 			
-term		-> factor {factorRest}
+term				-> factor {factorRest}
 
-factorRest	-> * factor
-			-> / factor
-			-> eps
+factorRest			-> * factor
+					-> / factor
+					-> eps
 			
-factor		-> LPAREN expr RPAREN
-			-> ID
-			-> NUM
+factor				-> LPAREN expr RPAREN
+					-> ID
+					-> NUM
 			
-output		-> OUT expr
+output				-> OUT expr

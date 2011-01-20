@@ -15,8 +15,13 @@ public abstract class AstNodeImpl implements AstNode {
 	public static final int DECLARATIONS = PARENTHESIZED + 1;
 	public static final int DECLARATION = DECLARATIONS + 1;
 	public static final int ASSIGNMENT = DECLARATION + 1;
-	public static final int OUTPUT = ASSIGNMENT + 1;
-
+	public static final int FUNCTION = ASSIGNMENT + 1;
+	public static final int PARAMETER = FUNCTION + 1;
+	public static final int BLOCK = PARAMETER + 1;
+	public static final int FUNCTIONDECLARATIONS = BLOCK + 1;
+	public static final int MAIN = FUNCTIONDECLARATIONS + 1;
+	
+	public static final int OUTPUT = 255;
 
 	public abstract int getTag();
 

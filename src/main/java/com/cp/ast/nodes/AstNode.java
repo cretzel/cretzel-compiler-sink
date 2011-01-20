@@ -19,7 +19,12 @@ public interface AstNode {
 		DECLARATION(DeclarationAstNode.class),
 		DECLARATIONS(DeclarationsAstNode.class),
 		ASSIGNMENT(AssignmentAstNode.class),
-		OUTPUT(OutputAstNode.class);
+		FUNCTIONDECLARATION(FunctionDeclarationAstNode.class),
+		OUTPUT(OutputAstNode.class),
+		PARAMETER(ParameterAstNode.class),
+		BLOCK(BlockAstNode.class),
+		FUNCTION_DECLARATIONS(FunctionDeclarationAstNode.class),
+		MAIN(MainAstNode.class);
 
 		private final Class<? extends AstNode> associatedInterface;
 

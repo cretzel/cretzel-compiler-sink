@@ -2,15 +2,21 @@ package com.cp.ast.visitor;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
 
 import com.cp.ast.nodes.AssignmentAstNode;
 import com.cp.ast.nodes.BinaryAstNode;
+import com.cp.ast.nodes.BlockAstNode;
 import com.cp.ast.nodes.DeclarationAstNode;
 import com.cp.ast.nodes.DeclarationsAstNode;
 import com.cp.ast.nodes.ErroneousAstNode;
+import com.cp.ast.nodes.FunctionDeclarationAstNode;
+import com.cp.ast.nodes.FunctionDeclarationsAstNode;
 import com.cp.ast.nodes.IdentifierAstNode;
+import com.cp.ast.nodes.MainAstNode;
 import com.cp.ast.nodes.NumberLiteralAstNode;
 import com.cp.ast.nodes.OutputAstNode;
+import com.cp.ast.nodes.ParameterAstNode;
 import com.cp.ast.nodes.ParenthesizedAstNode;
 import com.cp.ast.nodes.ProgramAstNode;
 
@@ -118,11 +124,10 @@ public class PrettyPrintVisitor implements SimpleVisitor {
 			out.write(program.getKind().name());
 			println();
 			indent();
-			program.getDeclr().accept(this);
-			OutputAstNode output = program.getOutput();
-			if (output != null) {
-				output.accept(this);
-			}
+
+			program.getFunctionDeclarations().accept(this);
+			program.getMain().accept(this);
+
 			undent();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -130,16 +135,49 @@ public class PrettyPrintVisitor implements SimpleVisitor {
 	}
 
 	@Override
+	public void visitFunctionDeclarations(
+			FunctionDeclarationsAstNode functionDeclarations) {
+
+		List<FunctionDeclarationAstNode> declarations = functionDeclarations
+				.getDeclarations();
+		for (FunctionDeclarationAstNode function : declarations) {
+			function.accept(this);
+
+		}
+	}
+
+	@Override
+	public void visitMain(MainAstNode main) {
+		try {
+			align();
+			out.write(main.getKind().name());
+			println();
+			indent();
+
+			main.getDeclr().accept(this);
+
+			OutputAstNode output = main.getOutput();
+			if (output != null) {
+				output.accept(this);
+			}
+			undent();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	@Override
 	public void visitDeclaration(DeclarationAstNode declr) {
 		throw new UnsupportedOperationException();
-		
-//		try {
-//			align();
-//			out.write(declr.getKind().name());
-//			println();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
+
+		// try {
+		// align();
+		// out.write(declr.getKind().name());
+		// println();
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// }
 	}
 
 	@Override
@@ -167,6 +205,59 @@ public class PrettyPrintVisitor implements SimpleVisitor {
 			indent();
 			assignment.getId().accept(this);
 			assignment.getExpr().accept(this);
+			undent();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void visitFunctionDeclaration(FunctionDeclarationAstNode function) {
+		try {
+			align();
+			out.write(function.getKind().name() + " ("
+					+ function.getId().getName() + ")");
+			println();
+			indent();
+
+			List<ParameterAstNode> parameters = function.getParameters();
+			for (ParameterAstNode param : parameters) {
+				param.accept(this);
+			}
+
+			BlockAstNode block = function.getBlock();
+			block.accept(this);
+
+			undent();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void visitParameter(ParameterAstNode param) {
+		try {
+			align();
+			out.write(param.getKind().name() + " (" + param.getName() + ")");
+			println();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void visitBlock(BlockAstNode block) {
+		try {
+			align();
+			out.write(block.getKind().name());
+			println();
+			indent();
+			List<AssignmentAstNode> variableDeclarations = block
+					.getVariableDeclarations();
+			for (AssignmentAstNode declr : variableDeclarations) {
+				declr.accept(this);
+			}
+			block.getExpression().accept(this);
 			undent();
 		} catch (IOException e) {
 			e.printStackTrace();

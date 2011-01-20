@@ -17,10 +17,6 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import com.cp.Analyzer;
-import com.cp.JasminByteCodeCreator;
-import com.cp.Lexer;
-import com.cp.Parser;
 import com.cp.ast.AstAnnotations;
 import com.cp.ast.nodes.ProgramAstNode;
 import com.cp.exception.VariableAlreadyDefinedException;
@@ -190,6 +186,32 @@ public class JasminByteCodeCreatorTest {
 		Analyzer analyzer = new Analyzer();
 		ast.accept(analyzer);
 
+	}
+
+	@Test
+	public void test_fun_01() throws Exception {
+
+		String input = "fun foo(a,b,c):\n" + "a+b+c;\n" + "val x := 1"
+				+ "out x";
+		Lexer lexer = new Lexer(new StringReader(input));
+		Parser parser = new Parser(lexer);
+		ProgramAstNode ast = parser.parseFully();
+		Analyzer analyzer = new Analyzer();
+		ast.accept(analyzer);
+
+		AstAnnotations annotations = analyzer.getAnnotations();
+
+		JasminByteCodeCreator creator = new JasminByteCodeCreator(annotations);
+		ast.accept(creator);
+		String jasminSource = creator.getSrc();
+		System.err.println(jasminSource);
+		Assert.assertTrue(jasminSource
+				.contains(".method public static foo(III)I"));
+		Assert.assertTrue(jasminSource
+				.contains("return"));
+
+		String output = createByteCodeAndExecuteMain(creator);
+		Assert.assertEquals("1", output);
 	}
 
 	private String createByteCodeAndExecuteMain(JasminByteCodeCreator creator)

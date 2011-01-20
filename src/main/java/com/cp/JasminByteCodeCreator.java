@@ -12,13 +12,18 @@ import com.cp.ast.AstAnnotations.AnnotationType;
 import com.cp.ast.nodes.AssignmentAstNode;
 import com.cp.ast.nodes.AstNodeImpl;
 import com.cp.ast.nodes.BinaryAstNode;
+import com.cp.ast.nodes.BlockAstNode;
 import com.cp.ast.nodes.DeclarationAstNode;
 import com.cp.ast.nodes.DeclarationsAstNode;
 import com.cp.ast.nodes.ErroneousAstNode;
 import com.cp.ast.nodes.ExpressionAstNode;
+import com.cp.ast.nodes.FunctionDeclarationAstNode;
+import com.cp.ast.nodes.FunctionDeclarationsAstNode;
 import com.cp.ast.nodes.IdentifierAstNode;
+import com.cp.ast.nodes.MainAstNode;
 import com.cp.ast.nodes.NumberLiteralAstNode;
 import com.cp.ast.nodes.OutputAstNode;
+import com.cp.ast.nodes.ParameterAstNode;
 import com.cp.ast.nodes.ParenthesizedAstNode;
 import com.cp.ast.nodes.ProgramAstNode;
 import com.cp.ast.visitor.SimpleVisitor;
@@ -55,6 +60,10 @@ public class JasminByteCodeCreator implements SimpleVisitor {
 		src.append(line).append("\n");
 	}
 
+	private void appendLine(String line, Object... args) {
+		appendLine(String.format(line, args));
+	}
+
 	public String getSrc() {
 		return src.toString();
 	}
@@ -73,15 +82,35 @@ public class JasminByteCodeCreator implements SimpleVisitor {
 		outdent();
 		appendLine(".end method");
 		appendLine("");
+
+		FunctionDeclarationsAstNode functionDeclarations = program
+				.getFunctionDeclarations();
+		functionDeclarations.accept(this);
+
+		program.getMain().accept(this);
+	}
+
+	@Override
+	public void visitFunctionDeclarations(
+			FunctionDeclarationsAstNode functionDeclarations) {
+		List<FunctionDeclarationAstNode> declarations = functionDeclarations
+				.getDeclarations();
+		for (FunctionDeclarationAstNode function : declarations) {
+			function.accept(this);
+		}
+	}
+
+	@Override
+	public void visitMain(MainAstNode main) {
+
 		appendLine(".method public static main([Ljava/lang/String;)V");
 		indent();
-		appendLine(".limit locals "
-				+ annotations.get(program, AnnotationType.NUMBER_OF_VARIABLES)
-				+ 1);
 		appendLine(".limit stack 100");
+		appendLine(".limit locals "
+				+ ((Integer)annotations.get(main, AnnotationType.NUMBER_OF_VARIABLES) + 2));
 
-		program.getDeclr().accept(this);
-		OutputAstNode output = program.getOutput();
+		main.getDeclr().accept(this);
+		OutputAstNode output = main.getOutput();
 		if (output != null) {
 			output.accept(this);
 		}
@@ -89,6 +118,8 @@ public class JasminByteCodeCreator implements SimpleVisitor {
 		appendLine("return");
 		outdent();
 		appendLine(".end method");
+		appendLine("");
+
 	}
 
 	@Override
@@ -160,12 +191,53 @@ public class JasminByteCodeCreator implements SimpleVisitor {
 	@Override
 	public void visitNumberLiteral(NumberLiteralAstNode numberLiteral) {
 		String value = numberLiteral.getValue();
-		appendLine("ldc " + value);
+		appendLine("bipush " + value);
 	}
 
 	@Override
 	public void visitParenthesized(ParenthesizedAstNode parenthesized) {
 		parenthesized.getExpr().accept(this);
+	}
+
+	@Override
+	public void visitFunctionDeclaration(FunctionDeclarationAstNode function) {
+
+		String paramsStr = "";
+		for (ParameterAstNode p : function.getParameters()) {
+			paramsStr += "I";
+		}
+		appendLine(".method public static %s(%s)%s",
+				function.getId().getName(), paramsStr, "I");
+		indent();
+		appendLine(".limit stack %d", 100);
+		appendLine(".limit locals %d",
+				((Integer)annotations.get(function, AnnotationType.NUMBER_OF_VARIABLES)));
+
+		function.getBlock().accept(this);
+		appendLine("ireturn");
+
+		// block
+		outdent();
+		appendLine(".end method");
+		appendLine("");
+
+	}
+
+	@Override
+	public void visitParameter(ParameterAstNode parameterAstNodeImpl) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void visitBlock(BlockAstNode block) {
+		List<AssignmentAstNode> variableDeclarations = block
+				.getVariableDeclarations();
+		for (AssignmentAstNode declr : variableDeclarations) {
+			declr.accept(this);
+		}
+
+		block.getExpression().accept(this);
 	}
 
 	@Override

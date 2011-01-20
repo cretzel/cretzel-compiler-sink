@@ -13,7 +13,11 @@ public enum Token {
 	EOF,
 	ASSIGNMENT(":="),
 	VAL("val"),
-	OUT("out");
+	FUN("fun"),
+	OUT("out"),
+	COLON(":"),
+	COMMA(":"),
+	SEMICOLON(";");
 
 	@SuppressWarnings("unused")
 	private String name;

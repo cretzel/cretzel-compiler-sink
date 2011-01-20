@@ -1,4 +1,5 @@
 package com.cp;
+
 import java.io.BufferedReader;
 import java.io.Reader;
 import java.io.StringReader;
@@ -69,7 +70,7 @@ public class LexerTest {
 
 		token = lexer.nextToken();
 		Assert.assertEquals(Token.PLUS, token);
-		
+
 		Assert.assertEquals(Token.NUM, lexer.nextToken());
 		Assert.assertEquals(Token.EOF, lexer.nextToken());
 
@@ -130,12 +131,12 @@ public class LexerTest {
 		Reader reader = new BufferedReader(new StringReader(input));
 
 		Lexer lexer = new Lexer(reader);
-		
+
 		Assert.assertEquals("NUM MULT LPAREN NUM PLUS NUM RPAREN",
 				lexer.readFullyTokenString());
 
 	}
-	
+
 	@Test
 	public void test_arithmetic_expr_08() throws Exception {
 
@@ -185,6 +186,35 @@ public class LexerTest {
 		Assert.assertEquals(Token.NUM, lexer.nextToken());
 		Assert.assertEquals(Token.OUT, lexer.nextToken());
 		Assert.assertEquals(Token.ID, lexer.nextToken());
+		Assert.assertEquals(Token.EOF, lexer.nextToken());
+
+	}
+
+	@Test
+	public void test_fun_() throws Exception {
+
+		String input = "fun foo(x):\n" + "4;\n" + "val a := 4" + "out foo(a)";
+		Reader reader = new BufferedReader(new StringReader(input));
+
+		Lexer lexer = new Lexer(reader);
+
+		Assert.assertEquals(Token.FUN, lexer.nextToken());
+		Assert.assertEquals(Token.ID, lexer.nextToken());
+		Assert.assertEquals(Token.LPAREN, lexer.nextToken());
+		Assert.assertEquals(Token.ID, lexer.nextToken());
+		Assert.assertEquals(Token.RPAREN, lexer.nextToken());
+		Assert.assertEquals(Token.COLON, lexer.nextToken());
+		Assert.assertEquals(Token.NUM, lexer.nextToken());
+		Assert.assertEquals(Token.SEMICOLON, lexer.nextToken());
+		Assert.assertEquals(Token.VAL, lexer.nextToken());
+		Assert.assertEquals(Token.ID, lexer.nextToken());
+		Assert.assertEquals(Token.ASSIGNMENT, lexer.nextToken());
+		Assert.assertEquals(Token.NUM, lexer.nextToken());
+		Assert.assertEquals(Token.OUT, lexer.nextToken());
+		Assert.assertEquals(Token.ID, lexer.nextToken());
+		Assert.assertEquals(Token.LPAREN, lexer.nextToken());
+		Assert.assertEquals(Token.ID, lexer.nextToken());
+		Assert.assertEquals(Token.RPAREN, lexer.nextToken());
 		Assert.assertEquals(Token.EOF, lexer.nextToken());
 
 	}

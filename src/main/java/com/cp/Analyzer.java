@@ -1,17 +1,25 @@
 package com.cp;
 
+import java.util.List;
+
 import com.cp.ast.AstAnnotations;
 import com.cp.ast.nodes.AssignmentAstNode;
 import com.cp.ast.nodes.BinaryAstNode;
+import com.cp.ast.nodes.BlockAstNode;
 import com.cp.ast.nodes.DeclarationAstNode;
 import com.cp.ast.nodes.DeclarationsAstNode;
 import com.cp.ast.nodes.ErroneousAstNode;
+import com.cp.ast.nodes.FunctionDeclarationAstNode;
+import com.cp.ast.nodes.FunctionDeclarationsAstNode;
 import com.cp.ast.nodes.IdentifierAstNode;
+import com.cp.ast.nodes.MainAstNode;
 import com.cp.ast.nodes.NumberLiteralAstNode;
 import com.cp.ast.nodes.OutputAstNode;
+import com.cp.ast.nodes.ParameterAstNode;
 import com.cp.ast.nodes.ParenthesizedAstNode;
 import com.cp.ast.nodes.ProgramAstNode;
 import com.cp.ast.visitor.SimpleVisitor;
+import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 
 public class Analyzer implements SimpleVisitor {
 
@@ -33,13 +41,30 @@ public class Analyzer implements SimpleVisitor {
 
 	@Override
 	public void visitProgram(ProgramAstNode program) {
-		program.getDeclr().accept(this);
+		program.getFunctionDeclarations().accept(this);
+		program.getMain().accept(this);
+	}
 
-		symbolTable.leftDeclarations(program);
-
-		if (program.hasOutput()) {
-			program.getOutput().accept(this);
+	@Override
+	public void visitFunctionDeclarations(
+			FunctionDeclarationsAstNode functionDeclarations) {
+		List<FunctionDeclarationAstNode> declarations = functionDeclarations
+				.getDeclarations();
+		for (FunctionDeclarationAstNode function : declarations) {
+			function.accept(this);
 		}
+	}
+
+	@Override
+	public void visitMain(MainAstNode main) {
+		main.getDeclr().accept(this);
+
+		symbolTable.leftMain(main);
+
+		if (main.hasOutput()) {
+			main.getOutput().accept(this);
+		}
+
 	}
 
 	@Override
@@ -90,6 +115,38 @@ public class Analyzer implements SimpleVisitor {
 	@Override
 	public void visitParenthesized(ParenthesizedAstNode parenthesized) {
 		parenthesized.getExpr().accept(this);
+	}
+
+	@Override
+	public void visitFunctionDeclaration(FunctionDeclarationAstNode function) {
+		symbolTable.enterMethod(function);
+		symbolTable.enterScope();
+
+		List<ParameterAstNode> parameters = function.getParameters();
+		for (ParameterAstNode param : parameters) {
+			param.accept(this);
+		}
+
+		function.getBlock().accept(this);
+
+		symbolTable.leaveScope();
+		symbolTable.leaveMethod();
+	}
+
+	@Override
+	public void visitParameter(ParameterAstNode parameter) {
+		symbolTable.enter(parameter.getName(), parameter);
+	}
+
+	@Override
+	public void visitBlock(BlockAstNode block) {
+		List<AssignmentAstNode> variableDeclarations = block
+				.getVariableDeclarations();
+		for (AssignmentAstNode declr : variableDeclarations) {
+			declr.accept(this);
+		}
+
+		block.getExpression().accept(this);
 	}
 
 	@Override

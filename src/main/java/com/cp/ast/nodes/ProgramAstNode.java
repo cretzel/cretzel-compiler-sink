@@ -2,10 +2,8 @@ package com.cp.ast.nodes;
 
 public interface ProgramAstNode extends AstNode {
 
-	OutputAstNode getOutput();
+	MainAstNode getMain();
 
-	DeclarationsAstNode getDeclr();
-
-	boolean hasOutput();
+	FunctionDeclarationsAstNode getFunctionDeclarations();
 
 }
