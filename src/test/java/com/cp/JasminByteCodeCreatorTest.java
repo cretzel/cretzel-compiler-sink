@@ -207,11 +207,34 @@ public class JasminByteCodeCreatorTest {
 		System.err.println(jasminSource);
 		Assert.assertTrue(jasminSource
 				.contains(".method public static foo(III)I"));
-		Assert.assertTrue(jasminSource
-				.contains("return"));
+		Assert.assertTrue(jasminSource.contains("return"));
 
 		String output = createByteCodeAndExecuteMain(creator);
 		Assert.assertEquals("1", output);
+	}
+
+	@Test
+	public void test_call_fun_01() throws Exception {
+
+		String input = "fun foo(a,b,c):\n" + "a+b+c;\n" + "val x := foo(1,2,3)"
+				+ "out x";
+		Lexer lexer = new Lexer(new StringReader(input));
+		Parser parser = new Parser(lexer);
+		ProgramAstNode ast = parser.parseFully();
+		Analyzer analyzer = new Analyzer();
+		ast.accept(analyzer);
+
+		AstAnnotations annotations = analyzer.getAnnotations();
+
+		JasminByteCodeCreator creator = new JasminByteCodeCreator(annotations);
+		ast.accept(creator);
+		String jasminSource = creator.getSrc();
+		System.err.println(jasminSource);
+		Assert.assertTrue(jasminSource
+				.contains("invokestatic Main/foo(III)I"));
+
+		String output = createByteCodeAndExecuteMain(creator);
+		Assert.assertEquals("6", output);
 	}
 
 	private String createByteCodeAndExecuteMain(JasminByteCodeCreator creator)

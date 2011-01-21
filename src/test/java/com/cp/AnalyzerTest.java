@@ -62,4 +62,27 @@ public class AnalyzerTest {
 
 	}
 
+	@Test
+	public void test_analyze_call_fun_01() throws Exception {
+
+		String input = "fun foo(a,b,c):\n" + "a+b+c;\n" + "val x := foo(1,2,3)"
+		+ "out x";
+		Lexer lexer = new Lexer(new StringReader(input));
+		Parser parser = new Parser(lexer);
+		ProgramAstNode ast = parser.parseFully();
+
+		Analyzer analyzer = new Analyzer();
+		ast.accept(analyzer);
+
+		SymbolTable symtable = analyzer.getSymbolTable();
+		Assert.assertFalse(symtable.hasEntry("a"));
+		Assert.assertFalse(symtable.hasEntry("b"));
+		Assert.assertFalse(symtable.hasEntry("c"));
+		Assert.assertTrue(symtable.hasEntry("x"));
+		SymbolTableEntry entry = symtable.get("x");
+		// 1,2,3 have been given to a,b,c, after function set back to 0
+		Assert.assertTrue(entry.variableNumber == 1);
+
+	}
+
 }

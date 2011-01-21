@@ -8,6 +8,7 @@ import com.cp.ast.nodes.DeclarationsAstNode;
 import com.cp.ast.nodes.ErroneousAstNode;
 import com.cp.ast.nodes.FunctionDeclarationAstNode;
 import com.cp.ast.nodes.FunctionDeclarationsAstNode;
+import com.cp.ast.nodes.FunctionInvocationAstNode;
 import com.cp.ast.nodes.IdentifierAstNode;
 import com.cp.ast.nodes.MainAstNode;
 import com.cp.ast.nodes.NumberLiteralAstNode;
@@ -48,5 +49,7 @@ public interface SimpleVisitor {
 			FunctionDeclarationsAstNode functionDeclarations);
 
 	void visitMain(MainAstNode main);
+
+	void visitFunctionInvocation(FunctionInvocationAstNode functionInvocation);
 
 }

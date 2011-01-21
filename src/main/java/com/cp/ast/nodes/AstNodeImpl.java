@@ -19,8 +19,9 @@ public abstract class AstNodeImpl implements AstNode {
 	public static final int PARAMETER = FUNCTION + 1;
 	public static final int BLOCK = PARAMETER + 1;
 	public static final int FUNCTIONDECLARATIONS = BLOCK + 1;
-	public static final int MAIN = FUNCTIONDECLARATIONS + 1;
-	
+	public static final int FUNCTIONINVOCATION = FUNCTIONDECLARATIONS + 1;
+	public static final int MAIN = FUNCTIONINVOCATION + 1;
+
 	public static final int OUTPUT = 255;
 
 	public abstract int getTag();

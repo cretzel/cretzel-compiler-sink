@@ -31,6 +31,7 @@ import com.cp.ast.nodes.FunctionDeclarationAstNode;
 import com.cp.ast.nodes.FunctionDeclarationAstNodeImpl;
 import com.cp.ast.nodes.FunctionDeclarationsAstNode;
 import com.cp.ast.nodes.FunctionDeclarationsAstNodeImpl;
+import com.cp.ast.nodes.FunctionInvocationAstNodeImpl;
 import com.cp.ast.nodes.IdentifierAstNode;
 import com.cp.ast.nodes.IdentifierAstNodeImpl;
 import com.cp.ast.nodes.MainAstNode;
@@ -310,11 +311,9 @@ public class Parser {
 	/**
 	 * factor -> LPAREN expr RPAREN
 	 * 
-	 * factor -> ID
+	 * factor -> ID ( '()' | '(' arguments + ')' )?
 	 * 
 	 * factor -> NUM
-	 * 
-	 * @return
 	 */
 	private ExpressionAstNode factor() {
 		if (accept(LPAREN)) {
@@ -322,9 +321,19 @@ public class Parser {
 			expect(RPAREN);
 			return new ParenthesizedAstNodeImpl(exprAstNode);
 		} else if (lexer.token() == ID) {
-			String lexval = lexer.lexval();
+			String name = lexer.lexval();
 			accept(ID);
-			return new IdentifierAstNodeImpl(lexval);
+
+			if (lexer.token() == LPAREN) {
+				accept(LPAREN);
+				List<ExpressionAstNode> arguments = lexer.token() == RPAREN ? new ArrayList<ExpressionAstNode>()
+						: arguments();
+				expect(RPAREN);
+				return new FunctionInvocationAstNodeImpl(name, arguments);
+			} else {
+				return new IdentifierAstNodeImpl(name);
+			}
+
 		} else if (lexer.token() == NUM) {
 			String lexval = lexer.lexval();
 			accept(NUM);
@@ -334,6 +343,21 @@ public class Parser {
 		reportError("Expected (expr) or identifier or number, but was "
 				+ lexer.token());
 		return new ErroneousAstNodeImpl();
+	}
+
+	/**
+	 * arguments -> expr ( ',' expr )*
+	 */
+	private List<ExpressionAstNode> arguments() {
+		List<ExpressionAstNode> arguments = new ArrayList<ExpressionAstNode>();
+		
+		arguments.add(expr());
+		
+		while (accept(Token.COMMA)) {
+			arguments.add(expr());
+		}
+		
+		return arguments;
 	}
 
 	private void reportError(String msg) {

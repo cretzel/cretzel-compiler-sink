@@ -35,7 +35,9 @@ factorRest			-> * factor
 					-> eps
 			
 factor				-> LPAREN expr RPAREN
-					-> ID
+					-> ID ( '()' | '(' arguments + ')' )?
 					-> NUM
+					
+arguments 			-> expr ( ',' expr )*
 			
 output				-> OUT expr

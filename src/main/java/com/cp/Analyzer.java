@@ -9,8 +9,10 @@ import com.cp.ast.nodes.BlockAstNode;
 import com.cp.ast.nodes.DeclarationAstNode;
 import com.cp.ast.nodes.DeclarationsAstNode;
 import com.cp.ast.nodes.ErroneousAstNode;
+import com.cp.ast.nodes.ExpressionAstNode;
 import com.cp.ast.nodes.FunctionDeclarationAstNode;
 import com.cp.ast.nodes.FunctionDeclarationsAstNode;
+import com.cp.ast.nodes.FunctionInvocationAstNode;
 import com.cp.ast.nodes.IdentifierAstNode;
 import com.cp.ast.nodes.MainAstNode;
 import com.cp.ast.nodes.NumberLiteralAstNode;
@@ -52,6 +54,15 @@ public class Analyzer implements SimpleVisitor {
 				.getDeclarations();
 		for (FunctionDeclarationAstNode function : declarations) {
 			function.accept(this);
+		}
+	}
+	
+	@Override
+	public void visitFunctionInvocation(
+			FunctionInvocationAstNode functionInvocation) {
+		List<ExpressionAstNode> arguments = functionInvocation.getArguments();
+		for (ExpressionAstNode arg : arguments) {
+			arg.accept(this);
 		}
 	}
 

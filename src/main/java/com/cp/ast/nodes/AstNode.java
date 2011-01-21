@@ -24,7 +24,8 @@ public interface AstNode {
 		PARAMETER(ParameterAstNode.class),
 		BLOCK(BlockAstNode.class),
 		FUNCTION_DECLARATIONS(FunctionDeclarationAstNode.class),
-		MAIN(MainAstNode.class);
+		MAIN(MainAstNode.class),
+		FUNCTION_INVOCATION(FunctionInvocationAstNode.class);
 
 		private final Class<? extends AstNode> associatedInterface;
 

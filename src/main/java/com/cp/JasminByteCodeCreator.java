@@ -19,6 +19,7 @@ import com.cp.ast.nodes.ErroneousAstNode;
 import com.cp.ast.nodes.ExpressionAstNode;
 import com.cp.ast.nodes.FunctionDeclarationAstNode;
 import com.cp.ast.nodes.FunctionDeclarationsAstNode;
+import com.cp.ast.nodes.FunctionInvocationAstNode;
 import com.cp.ast.nodes.IdentifierAstNode;
 import com.cp.ast.nodes.MainAstNode;
 import com.cp.ast.nodes.NumberLiteralAstNode;
@@ -107,7 +108,8 @@ public class JasminByteCodeCreator implements SimpleVisitor {
 		indent();
 		appendLine(".limit stack 100");
 		appendLine(".limit locals "
-				+ ((Integer)annotations.get(main, AnnotationType.NUMBER_OF_VARIABLES) + 2));
+				+ ((Integer) annotations.get(main,
+						AnnotationType.NUMBER_OF_VARIABLES) + 2));
 
 		main.getDeclr().accept(this);
 		OutputAstNode output = main.getOutput();
@@ -210,8 +212,8 @@ public class JasminByteCodeCreator implements SimpleVisitor {
 				function.getId().getName(), paramsStr, "I");
 		indent();
 		appendLine(".limit stack %d", 100);
-		appendLine(".limit locals %d",
-				((Integer)annotations.get(function, AnnotationType.NUMBER_OF_VARIABLES)));
+		appendLine(".limit locals %d", ((Integer) annotations.get(function,
+				AnnotationType.NUMBER_OF_VARIABLES)));
 
 		function.getBlock().accept(this);
 		appendLine("ireturn");
@@ -238,6 +240,22 @@ public class JasminByteCodeCreator implements SimpleVisitor {
 		}
 
 		block.getExpression().accept(this);
+	}
+
+	@Override
+	public void visitFunctionInvocation(
+			FunctionInvocationAstNode functionInvocation) {
+
+		String paramsStr = "";
+		List<ExpressionAstNode> arguments = functionInvocation.getArguments();
+		for (ExpressionAstNode arg : arguments) {
+			arg.accept(this);
+			paramsStr += "I";
+		}
+
+		appendLine("invokestatic Main/%s(%s)I", functionInvocation.getName(),
+				paramsStr);
+
 	}
 
 	@Override
