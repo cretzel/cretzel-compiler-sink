@@ -8,6 +8,7 @@ import java.util.List;
 public class Lexer {
 
 	private final Reader reader;
+	private int lineNo = 1;
 	private int lookahead = -1;
 	private int current = -1;
 	private Token token;
@@ -47,8 +48,12 @@ public class Lexer {
 		switch (current) {
 
 		case ' ':
+		case '\r':
 		case '\t':
+			read();
+			return nextToken();
 		case '\n':
+			lineNo++;
 			read();
 			return nextToken();
 
@@ -97,7 +102,7 @@ public class Lexer {
 		}
 
 		throw new RuntimeException("Unrecognized input: '" + (char) current
-				+ "'");
+				+ "' on line " + lineNo);
 	}
 
 	private Token parseAssignmentOrColon() {

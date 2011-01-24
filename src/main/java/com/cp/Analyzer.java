@@ -1,6 +1,8 @@
 package com.cp;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.cp.ast.AstAnnotations;
 import com.cp.ast.nodes.AssignmentAstNode;
@@ -21,16 +23,20 @@ import com.cp.ast.nodes.ParameterAstNode;
 import com.cp.ast.nodes.ParenthesizedAstNode;
 import com.cp.ast.nodes.ProgramAstNode;
 import com.cp.ast.visitor.SimpleVisitor;
-import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
+import com.cp.exception.FunctionAlreadyDefinedException;
+import com.cp.exception.FunctionNotDefinedException;
+import com.cp.exception.FunctionParametersDontMatchException;
 
 public class Analyzer implements SimpleVisitor {
 
 	private final AstAnnotations annotations;
 	private final SymbolTable symbolTable;
+	private final Map<String, FunctionDeclarationAstNode> functionsTable;
 
 	public Analyzer() {
 		annotations = new AstAnnotations();
 		symbolTable = new SymbolTable(annotations);
+		functionsTable = new HashMap<String, FunctionDeclarationAstNode>();
 	}
 
 	public AstAnnotations getAnnotations() {
@@ -43,8 +49,28 @@ public class Analyzer implements SimpleVisitor {
 
 	@Override
 	public void visitProgram(ProgramAstNode program) {
+
+		enterFunctionsIntoTable(program);
+
+		// Go on with the actual analyzing
 		program.getFunctionDeclarations().accept(this);
 		program.getMain().accept(this);
+	}
+
+	private void enterFunctionsIntoTable(ProgramAstNode program) {
+		FunctionDeclarationsAstNode functionsAstNode = program
+				.getFunctionDeclarations();
+		List<FunctionDeclarationAstNode> functions = functionsAstNode
+				.getDeclarations();
+
+		for (FunctionDeclarationAstNode function : functions) {
+			String name = function.getId().getName();
+			if (functionsTable.containsKey(name)) {
+				throw new FunctionAlreadyDefinedException(name, function);
+			}
+			this.functionsTable.put(name, function);
+		}
+
 	}
 
 	@Override
@@ -56,11 +82,27 @@ public class Analyzer implements SimpleVisitor {
 			function.accept(this);
 		}
 	}
-	
+
 	@Override
 	public void visitFunctionInvocation(
 			FunctionInvocationAstNode functionInvocation) {
+		
+		// check is defined
+		String name = functionInvocation.getName();
+		if (!functionsTable.containsKey(name)) {
+			throw new FunctionNotDefinedException(name, functionInvocation);
+		}
+		
+		// check parameter count match
+		FunctionDeclarationAstNode callee = functionsTable.get(name);
+		int paramCount = callee.getParameters().size();
 		List<ExpressionAstNode> arguments = functionInvocation.getArguments();
+		if (arguments.size() != paramCount) {
+			throw new FunctionParametersDontMatchException(name,
+					functionInvocation);
+		}
+		
+		// process args
 		for (ExpressionAstNode arg : arguments) {
 			arg.accept(this);
 		}
@@ -130,6 +172,7 @@ public class Analyzer implements SimpleVisitor {
 
 	@Override
 	public void visitFunctionDeclaration(FunctionDeclarationAstNode function) {
+
 		symbolTable.enterMethod(function);
 		symbolTable.enterScope();
 

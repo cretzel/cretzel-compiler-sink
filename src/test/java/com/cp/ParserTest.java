@@ -136,6 +136,19 @@ public class ParserTest {
 	}
 
 	@Test
+	public void test_parse_fun_05() throws Exception {
+
+		String input = "fun foo(a,b,c):a+b+c;\n" + "fun bar(a):\n" + "a*a;\n"
+				+ "out bar(foo(1,2,3))";
+		Lexer lexer = new Lexer(new StringReader(input));
+		Parser parser = new Parser(lexer);
+
+		ProgramAstNode ast = parser.parseFully();
+
+		prettyPrint(ast);
+	}
+
+	@Test
 	public void test_parse_call_fun_01() throws Exception {
 
 		String input = "fun foo(a,b,c):\n" + "a+b+c;\n" + "val x := foo(1,2,3)"

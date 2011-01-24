@@ -153,40 +153,6 @@ public class JasminByteCodeCreatorTest {
 		Assert.assertEquals("25", output);
 	}
 
-	@Test(expected = VariableAlreadyDefinedException.class)
-	public void test_variableAlreadDefined_Exception() throws Exception {
-
-		Lexer lexer = new Lexer(new StringReader("val a := 2\n"
-				+ "val a := 3\n" + "out a+b"));
-		Parser parser = new Parser(lexer);
-		ProgramAstNode ast = parser.parseFully();
-		Analyzer analyzer = new Analyzer();
-		ast.accept(analyzer);
-
-	}
-
-	@Test(expected = VariableNotDefinedException.class)
-	public void test_variableNotDefined_Exception_1() throws Exception {
-
-		Lexer lexer = new Lexer(new StringReader("val a := 2\n" + "out b"));
-		Parser parser = new Parser(lexer);
-		ProgramAstNode ast = parser.parseFully();
-		Analyzer analyzer = new Analyzer();
-		ast.accept(analyzer);
-
-	}
-
-	@Test(expected = VariableNotDefinedException.class)
-	public void test_variableNotDefined_Exception_2() throws Exception {
-
-		Lexer lexer = new Lexer(new StringReader("val a := 2\n"
-				+ "val b := a + b\n" + "out b"));
-		Parser parser = new Parser(lexer);
-		ProgramAstNode ast = parser.parseFully();
-		Analyzer analyzer = new Analyzer();
-		ast.accept(analyzer);
-
-	}
 
 	@Test
 	public void test_fun_01() throws Exception {
@@ -230,11 +196,54 @@ public class JasminByteCodeCreatorTest {
 		ast.accept(creator);
 		String jasminSource = creator.getSrc();
 		System.err.println(jasminSource);
-		Assert.assertTrue(jasminSource
-				.contains("invokestatic Main/foo(III)I"));
+		Assert.assertTrue(jasminSource.contains("invokestatic Main/foo(III)I"));
 
 		String output = createByteCodeAndExecuteMain(creator);
 		Assert.assertEquals("6", output);
+	}
+
+	@Test
+	public void test_call_fun_02() throws Exception {
+
+		String input = "fun foo(a,b,c):\n" + "a+b+c;\n" + "out foo(10,10,22)";
+		Lexer lexer = new Lexer(new StringReader(input));
+		Parser parser = new Parser(lexer);
+		ProgramAstNode ast = parser.parseFully();
+		Analyzer analyzer = new Analyzer();
+		ast.accept(analyzer);
+
+		AstAnnotations annotations = analyzer.getAnnotations();
+
+		JasminByteCodeCreator creator = new JasminByteCodeCreator(annotations);
+		ast.accept(creator);
+		String jasminSource = creator.getSrc();
+		System.err.println(jasminSource);
+		Assert.assertTrue(jasminSource.contains("invokestatic Main/foo(III)I"));
+
+		String output = createByteCodeAndExecuteMain(creator);
+		Assert.assertEquals("42", output);
+	}
+
+	@Test
+	public void test_call_fun_03() throws Exception {
+
+		String input = "fun foo(a,b,c):a+b+c;\n" +"fun bar(a):\n" + "a*a;\n" + "out bar(foo(1,2,3))";
+		Lexer lexer = new Lexer(new StringReader(input));
+		Parser parser = new Parser(lexer);
+		ProgramAstNode ast = parser.parseFully();
+		Analyzer analyzer = new Analyzer();
+		ast.accept(analyzer);
+
+		AstAnnotations annotations = analyzer.getAnnotations();
+
+		JasminByteCodeCreator creator = new JasminByteCodeCreator(annotations);
+		ast.accept(creator);
+		String jasminSource = creator.getSrc();
+		System.err.println(jasminSource);
+		Assert.assertTrue(jasminSource.contains("invokestatic Main/foo(III)I"));
+
+		String output = createByteCodeAndExecuteMain(creator);
+		Assert.assertEquals("36", output);
 	}
 
 	private String createByteCodeAndExecuteMain(JasminByteCodeCreator creator)
