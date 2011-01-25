@@ -15,6 +15,7 @@ import com.cp.ast.nodes.FunctionDeclarationAstNode;
 import com.cp.ast.nodes.FunctionDeclarationsAstNode;
 import com.cp.ast.nodes.FunctionInvocationAstNode;
 import com.cp.ast.nodes.IdentifierAstNode;
+import com.cp.ast.nodes.IfElseAstNode;
 import com.cp.ast.nodes.MainAstNode;
 import com.cp.ast.nodes.NumberLiteralAstNode;
 import com.cp.ast.nodes.OutputAstNode;
@@ -60,7 +61,6 @@ public class PrettyPrintVisitor implements SimpleVisitor {
 
 	@Override
 	public void visitBinary(BinaryAstNode binary) {
-
 		try {
 			align();
 			out.write(binary.getKind().name());
@@ -68,6 +68,22 @@ public class PrettyPrintVisitor implements SimpleVisitor {
 			indent();
 			binary.getLhs().accept(this);
 			binary.getRhs().accept(this);
+			undent();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void visitIfElse(IfElseAstNode ifElse) {
+		try {
+			align();
+			out.write(ifElse.getKind().name());
+			println();
+			indent();
+			ifElse.getCondition().accept(this);
+			ifElse.getThenBlock().accept(this);
+			ifElse.getElseBlock().accept(this);
 			undent();
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -5,6 +5,7 @@ import static com.cp.Token.DIV;
 import static com.cp.Token.EOF;
 import static com.cp.Token.FUN;
 import static com.cp.Token.ID;
+import static com.cp.Token.IF;
 import static com.cp.Token.LPAREN;
 import static com.cp.Token.MINUS;
 import static com.cp.Token.MULT;
@@ -34,6 +35,8 @@ import com.cp.ast.nodes.FunctionDeclarationsAstNodeImpl;
 import com.cp.ast.nodes.FunctionInvocationAstNodeImpl;
 import com.cp.ast.nodes.IdentifierAstNode;
 import com.cp.ast.nodes.IdentifierAstNodeImpl;
+import com.cp.ast.nodes.IfElseAstNode;
+import com.cp.ast.nodes.IfElseAstNodeImpl;
 import com.cp.ast.nodes.MainAstNode;
 import com.cp.ast.nodes.MainAstNodeImpl;
 import com.cp.ast.nodes.NumberLiteralAstNodeImpl;
@@ -44,6 +47,7 @@ import com.cp.ast.nodes.ParameterAstNodeImpl;
 import com.cp.ast.nodes.ParenthesizedAstNodeImpl;
 import com.cp.ast.nodes.ProgramAstNode;
 import com.cp.ast.nodes.ProgramAstNodeImpl;
+import com.cp.exception.CompilationException;
 
 public class Parser {
 
@@ -254,37 +258,57 @@ public class Parser {
 	}
 
 	/**
-	 * expr -> term {[+|-] term}
+	 * expr -> ifExpression
 	 * 
-	 * @return ExpressionAstNode
+	 * expr -> term {[+|-] term}
 	 */
 	private ExpressionAstNode expr() {
-		ExpressionAstNode termAstNode = term();
 
-		while (lexer.token() == PLUS || lexer.token() == MINUS) {
-			if (lexer.token() == PLUS) {
-				expect(PLUS);
-				ExpressionAstNode termAstNode1 = term();
-				termAstNode = new BinaryAstNodeImpl(AstNodeImpl.PLUS,
-						termAstNode, termAstNode1);
-			} else if (lexer.token() == MINUS) {
-				expect(MINUS);
-				ExpressionAstNode termAstNode1 = term();
-				termAstNode = new BinaryAstNodeImpl(AstNodeImpl.MINUS,
-						termAstNode, termAstNode1);
-			} else {
-				reportError("Cannot happen");
+		if (lexer.token() == IF) {
+			return ifElseExpression();
+		} else {
+			ExpressionAstNode termAstNode = term();
+
+			while (lexer.token() == PLUS || lexer.token() == MINUS) {
+				if (lexer.token() == PLUS) {
+					expect(PLUS);
+					ExpressionAstNode termAstNode1 = term();
+					termAstNode = new BinaryAstNodeImpl(AstNodeImpl.PLUS,
+							termAstNode, termAstNode1);
+				} else if (lexer.token() == MINUS) {
+					expect(MINUS);
+					ExpressionAstNode termAstNode1 = term();
+					termAstNode = new BinaryAstNodeImpl(AstNodeImpl.MINUS,
+							termAstNode, termAstNode1);
+				} else {
+					reportError("Cannot happen");
+				}
 			}
+
+			return termAstNode;
 		}
-
-		return termAstNode;
-
 	}
 
 	/**
-	 * term -> factor {[+|-] factor}
-	 * 
-	 * @return
+	 * ifExpression -> 'if' expr ':' block 'else' ':' block
+	 */
+	private IfElseAstNode ifElseExpression() {
+
+		if (accept(IF)) {
+			ExpressionAstNode condition = expr();
+			expect(Token.COLON);
+			BlockAstNode ifBlock = block();
+			expect(Token.ELSE);
+			expect(Token.COLON);
+			BlockAstNode elseBlock = block();
+			return new IfElseAstNodeImpl(condition, ifBlock, elseBlock);
+		} else {
+			throw new CompilationException("Cannot happen");
+		}
+	}
+
+	/**
+	 * term -> factor {[*|/] factor}
 	 */
 	private ExpressionAstNode term() {
 
@@ -350,13 +374,13 @@ public class Parser {
 	 */
 	private List<ExpressionAstNode> arguments() {
 		List<ExpressionAstNode> arguments = new ArrayList<ExpressionAstNode>();
-		
+
 		arguments.add(expr());
-		
+
 		while (accept(Token.COMMA)) {
 			arguments.add(expr());
 		}
-		
+
 		return arguments;
 	}
 

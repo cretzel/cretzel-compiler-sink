@@ -153,7 +153,6 @@ public class JasminByteCodeCreatorTest {
 		Assert.assertEquals("25", output);
 	}
 
-
 	@Test
 	public void test_fun_01() throws Exception {
 
@@ -227,7 +226,8 @@ public class JasminByteCodeCreatorTest {
 	@Test
 	public void test_call_fun_03() throws Exception {
 
-		String input = "fun foo(a,b,c):a+b+c;\n" +"fun bar(a):\n" + "a*a;\n" + "out bar(foo(1,2,3))";
+		String input = "fun foo(a,b,c):a+b+c;\n" + "fun bar(a):\n" + "a*a;\n"
+				+ "out bar(foo(1,2,3))";
 		Lexer lexer = new Lexer(new StringReader(input));
 		Parser parser = new Parser(lexer);
 		ProgramAstNode ast = parser.parseFully();
@@ -246,6 +246,57 @@ public class JasminByteCodeCreatorTest {
 		Assert.assertEquals("36", output);
 	}
 
+	@Test
+	public void test_if_else_expression_01() throws Exception {
+
+		String input = "val d := if 1:\n" + "    3;\n" + "else:\n" + "    7;\n"
+				+ "out d";
+		Lexer lexer = new Lexer(new StringReader(input));
+		Parser parser = new Parser(lexer);
+		ProgramAstNode ast = parser.parseFully();
+		Analyzer analyzer = new Analyzer();
+		ast.accept(analyzer);
+
+		AstAnnotations annotations = analyzer.getAnnotations();
+
+		JasminByteCodeCreator creator = new JasminByteCodeCreator(annotations);
+		ast.accept(creator);
+		String jasminSource = creator.getSrc();
+		System.err.println(jasminSource);
+		Assert.assertTrue(jasminSource.contains("ifeq"));
+		Assert.assertTrue(jasminSource.contains("goto"));
+
+		String output = createByteCodeAndExecuteMain(creator);
+		Assert.assertEquals("3", output);
+	}
+
+	@Test
+	public void test_recursive_fun_01() throws Exception {
+
+		String input = "fun fak(n):\n" +
+				"if n-1: n * fak(n-1);\n" + 
+				"else: 1;\n;" + 
+				"out fak(5)";
+		Lexer lexer = new Lexer(new StringReader(input));
+		Parser parser = new Parser(lexer);
+		ProgramAstNode ast = parser.parseFully();
+		Analyzer analyzer = new Analyzer();
+		ast.accept(analyzer);
+
+		AstAnnotations annotations = analyzer.getAnnotations();
+
+		JasminByteCodeCreator creator = new JasminByteCodeCreator(annotations);
+		ast.accept(creator);
+		String jasminSource = creator.getSrc();
+		System.err.println(jasminSource);
+
+		String output = createByteCodeAndExecuteMain(creator);
+		Assert.assertEquals("120", output);
+	}
+
+	// Helpers ----------------------------------------------------
+	
+	
 	private String createByteCodeAndExecuteMain(JasminByteCodeCreator creator)
 			throws FileNotFoundException, IOException, Exception {
 		File file = createByteCode(creator);

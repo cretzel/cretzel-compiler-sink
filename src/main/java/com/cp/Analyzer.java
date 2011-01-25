@@ -16,6 +16,7 @@ import com.cp.ast.nodes.FunctionDeclarationAstNode;
 import com.cp.ast.nodes.FunctionDeclarationsAstNode;
 import com.cp.ast.nodes.FunctionInvocationAstNode;
 import com.cp.ast.nodes.IdentifierAstNode;
+import com.cp.ast.nodes.IfElseAstNode;
 import com.cp.ast.nodes.MainAstNode;
 import com.cp.ast.nodes.NumberLiteralAstNode;
 import com.cp.ast.nodes.OutputAstNode;
@@ -206,6 +207,13 @@ public class Analyzer implements SimpleVisitor {
 	@Override
 	public void visitOutput(OutputAstNode outputAstNodeImpl) {
 		outputAstNodeImpl.getExpr().accept(this);
+	}
+
+	@Override
+	public void visitIfElse(IfElseAstNode ifElse) {
+		ifElse.getCondition().accept(this);
+		ifElse.getThenBlock().accept(this);
+		ifElse.getElseBlock().accept(this);
 	}
 
 }

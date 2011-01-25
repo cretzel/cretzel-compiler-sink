@@ -77,6 +77,9 @@ public class Lexer {
 
 		case ':':
 			return parseAssignmentOrColon();
+		case '=':
+			read();
+			return Token.EQUALS;
 		case ';':
 			read();
 			return Token.SEMICOLON;
@@ -134,6 +137,12 @@ public class Lexer {
 		}
 		if ("out".equals(this.lexval)) {
 			return Token.OUT;
+		}
+		if ("if".equals(this.lexval)) {
+			return Token.IF;
+		}
+		if ("else".equals(this.lexval)) {
+			return Token.ELSE;
 		}
 
 		return Token.ID;

@@ -1,8 +1,11 @@
 package com.cp;
 
+import java.io.BufferedReader;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.io.StringReader;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.cp.ast.nodes.ProgramAstNode;
@@ -172,6 +175,20 @@ public class ParserTest {
 		ProgramAstNode ast = parser.parseFully();
 
 		prettyPrint(ast);
+	}
+
+	@Test
+	public void test_if_else_expression_01() throws Exception {
+
+		String input = "val d := if 1:\n" + "    3;\n" + "else:\n" + "    7;";
+		Reader reader = new BufferedReader(new StringReader(input));
+		Lexer lexer = new Lexer(reader);
+
+		Parser parser = new Parser(lexer);
+		ProgramAstNode ast = parser.parseFully();
+
+		prettyPrint(ast);
+
 	}
 
 	private void prettyPrint(ProgramAstNode ast) {

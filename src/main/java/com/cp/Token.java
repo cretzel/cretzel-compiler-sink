@@ -17,7 +17,10 @@ public enum Token {
 	OUT("out"),
 	COLON(":"),
 	COMMA(":"),
-	SEMICOLON(";");
+	SEMICOLON(";"),
+	IF("if"),
+	ELSE("else"),
+	EQUALS("=");
 
 	@SuppressWarnings("unused")
 	private String name;

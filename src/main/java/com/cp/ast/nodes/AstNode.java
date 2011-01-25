@@ -25,7 +25,8 @@ public interface AstNode {
 		BLOCK(BlockAstNode.class),
 		FUNCTION_DECLARATIONS(FunctionDeclarationAstNode.class),
 		MAIN(MainAstNode.class),
-		FUNCTION_INVOCATION(FunctionInvocationAstNode.class);
+		FUNCTION_INVOCATION(FunctionInvocationAstNode.class),
+		IF_ELSE(IfElseAstNode.class);
 
 		private final Class<? extends AstNode> associatedInterface;
 

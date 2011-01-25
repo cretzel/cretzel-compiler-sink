@@ -22,14 +22,17 @@ block				-> variableDeclarations expr SEMICOLON
 variableDeclarations -> variableDeclaration variableDeclarations
 					 -> eps
 
-expr 				-> term {termRest}
+expr 				-> ifExpression
+					-> term {termRest}
+
+ifExpression		-> 'if' expr ':' block 'else' ':' block
+
+term				-> factor {factorRest}
 
 termRest			-> + term
 					-> - term
 					-> eps
 			
-term				-> factor {factorRest}
-
 factorRest			-> * factor
 					-> / factor
 					-> eps

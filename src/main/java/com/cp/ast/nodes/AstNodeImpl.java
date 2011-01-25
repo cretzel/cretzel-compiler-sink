@@ -21,6 +21,7 @@ public abstract class AstNodeImpl implements AstNode {
 	public static final int FUNCTIONDECLARATIONS = BLOCK + 1;
 	public static final int FUNCTIONINVOCATION = FUNCTIONDECLARATIONS + 1;
 	public static final int MAIN = FUNCTIONINVOCATION + 1;
+	public static final int IFELSE = MAIN + 1;
 
 	public static final int OUTPUT = 255;
 

@@ -219,6 +219,27 @@ public class LexerTest {
 
 	}
 
+	@Test
+	public void test_if_else_expression_01() throws Exception {
+
+		String input = "if 1:\n" + "    0;\n" + "else:\n" + "    1;";
+		Reader reader = new BufferedReader(new StringReader(input));
+
+		Lexer lexer = new Lexer(reader);
+
+		Assert.assertEquals(Token.IF, lexer.nextToken());
+		Assert.assertEquals(Token.NUM, lexer.nextToken());
+		Assert.assertEquals(Token.COLON, lexer.nextToken());
+		Assert.assertEquals(Token.NUM, lexer.nextToken());
+		Assert.assertEquals(Token.SEMICOLON, lexer.nextToken());
+		Assert.assertEquals(Token.ELSE, lexer.nextToken());
+		Assert.assertEquals(Token.COLON, lexer.nextToken());
+		Assert.assertEquals(Token.NUM, lexer.nextToken());
+		Assert.assertEquals(Token.SEMICOLON, lexer.nextToken());
+		Assert.assertEquals(Token.EOF, lexer.nextToken());
+
+	}
+
 	@After
 	public void tearDown() throws Exception {
 	}
