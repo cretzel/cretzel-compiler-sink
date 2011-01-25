@@ -48,6 +48,7 @@ import com.cp.ast.nodes.ParenthesizedAstNodeImpl;
 import com.cp.ast.nodes.ProgramAstNode;
 import com.cp.ast.nodes.ProgramAstNodeImpl;
 import com.cp.exception.CompilationException;
+import com.cp.exception.ParseException;
 
 public class Parser {
 
@@ -385,6 +386,6 @@ public class Parser {
 	}
 
 	private void reportError(String msg) {
-		throw new RuntimeException(msg);
+		throw new ParseException(msg);
 	}
 }

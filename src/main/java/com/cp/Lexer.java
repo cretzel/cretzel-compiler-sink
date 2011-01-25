@@ -5,10 +5,12 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.cp.exception.UnrecognizedInputException;
+
 public class Lexer {
 
 	private final Reader reader;
-	private int lineNo = 1;
+	private int lineno = 1;
 	private int lookahead = -1;
 	private int current = -1;
 	private Token token;
@@ -53,7 +55,7 @@ public class Lexer {
 			read();
 			return nextToken();
 		case '\n':
-			lineNo++;
+			lineno++;
 			read();
 			return nextToken();
 
@@ -104,8 +106,7 @@ public class Lexer {
 			return Token.EOF;
 		}
 
-		throw new RuntimeException("Unrecognized input: '" + (char) current
-				+ "' on line " + lineNo);
+		throw new UnrecognizedInputException((char) current, lineno);
 	}
 
 	private Token parseAssignmentOrColon() {

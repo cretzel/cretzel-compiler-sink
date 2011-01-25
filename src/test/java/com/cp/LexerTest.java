@@ -9,6 +9,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.cp.exception.UnrecognizedInputException;
+
 public class LexerTest {
 
 	@Before
@@ -238,6 +240,40 @@ public class LexerTest {
 		Assert.assertEquals(Token.SEMICOLON, lexer.nextToken());
 		Assert.assertEquals(Token.EOF, lexer.nextToken());
 
+	}
+
+	@Test(expected = UnrecognizedInputException.class)
+	public void test_lexer_exception_01() throws Exception {
+
+		String input = "...";
+		Reader reader = new BufferedReader(new StringReader(input));
+
+		Lexer lexer = new Lexer(reader);
+
+		try {
+			lexer.nextToken();
+		} catch (UnrecognizedInputException e) {
+			Assert.assertEquals(1, e.getLineno());
+			Assert.assertEquals(".", e.getInput());
+			throw e;
+		}
+	}
+
+	@Test(expected = UnrecognizedInputException.class)
+	public void test_lexer_exception_02() throws Exception {
+
+		String input = "val x := 1\n#x";
+		Reader reader = new BufferedReader(new StringReader(input));
+
+		Lexer lexer = new Lexer(reader);
+
+		try {
+			lexer.readFully();
+		} catch (UnrecognizedInputException e) {
+			Assert.assertEquals(2, e.getLineno());
+			Assert.assertEquals("#", e.getInput());
+			throw e;
+		}
 	}
 
 	@After

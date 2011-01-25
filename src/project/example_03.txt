@@ -1,8 +1,6 @@
 fun fak(n):
-	if n=1:
-	    1;
-	else:
-	    n * fak(n-1);
+	if n-1: 1;
+	else: n * fak(n-1);
 	;
 	
 out fak(5)

@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import com.cp.ast.nodes.ProgramAstNode;
 import com.cp.ast.visitor.PrettyPrintVisitor;
+import com.cp.exception.ParseException;
 
 public class ParserTest {
 
@@ -188,6 +189,22 @@ public class ParserTest {
 		ProgramAstNode ast = parser.parseFully();
 
 		prettyPrint(ast);
+
+	}
+
+	@Test(expected = ParseException.class)
+	public void test_parse_exception_01() throws Exception {
+
+		String input = "def d := 5";
+		Reader reader = new BufferedReader(new StringReader(input));
+		Lexer lexer = new Lexer(reader);
+
+		Parser parser = new Parser(lexer);
+		try {
+			parser.parseFully();
+		} catch (ParseException e) {
+			throw e;
+		}
 
 	}
 
