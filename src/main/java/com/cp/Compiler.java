@@ -27,9 +27,9 @@ public class Compiler {
 		ast.accept(creator);
 
 		String outFolder = srcFile.getParent();
-		String srcName = srcFile.getName();
-		String srcBaseName = srcName.substring(0, srcName.lastIndexOf('.'));
-		String outName = /*srcBaseName*/ "Main" + ".class";
+		// String srcName = srcFile.getName();
+		// String srcBaseName = srcName.substring(0, srcName.lastIndexOf('.'));
+		String outName = /* srcBaseName */"Main" + ".class";
 		File outFile = new File(outFolder, outName);
 		FileOutputStream fout = new FileOutputStream(outFile);
 		creator.createByteCode(fout);

@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import com.cp.ast.nodes.ProgramAstNode;

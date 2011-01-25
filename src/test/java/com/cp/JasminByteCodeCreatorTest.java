@@ -19,8 +19,6 @@ import org.junit.Test;
 
 import com.cp.ast.AstAnnotations;
 import com.cp.ast.nodes.ProgramAstNode;
-import com.cp.exception.VariableAlreadyDefinedException;
-import com.cp.exception.VariableNotDefinedException;
 
 public class JasminByteCodeCreatorTest {
 
@@ -273,10 +271,8 @@ public class JasminByteCodeCreatorTest {
 	@Test
 	public void test_recursive_fun_01() throws Exception {
 
-		String input = "fun fak(n):\n" +
-				"if n-1: n * fak(n-1);\n" + 
-				"else: 1;\n;" + 
-				"out fak(5)";
+		String input = "fun fak(n):\n" + "if n-1: n * fak(n-1);\n"
+				+ "else: 1;\n;" + "out fak(5)";
 		Lexer lexer = new Lexer(new StringReader(input));
 		Parser parser = new Parser(lexer);
 		ProgramAstNode ast = parser.parseFully();
@@ -295,8 +291,7 @@ public class JasminByteCodeCreatorTest {
 	}
 
 	// Helpers ----------------------------------------------------
-	
-	
+
 	private String createByteCodeAndExecuteMain(JasminByteCodeCreator creator)
 			throws FileNotFoundException, IOException, Exception {
 		File file = createByteCode(creator);

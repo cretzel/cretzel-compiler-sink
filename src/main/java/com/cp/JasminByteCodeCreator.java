@@ -209,7 +209,7 @@ public class JasminByteCodeCreator implements SimpleVisitor {
 	public void visitFunctionDeclaration(FunctionDeclarationAstNode function) {
 
 		String paramsStr = "";
-		for (ParameterAstNode p : function.getParameters()) {
+		for (int i = 0; i < function.getParameters().size(); i++) {
 			paramsStr += "I";
 		}
 		appendLine(".method public static %s(%s)%s",

@@ -10,7 +10,6 @@ import com.cp.ast.AstAnnotations.AnnotationType;
 import com.cp.ast.nodes.AstNode;
 import com.cp.ast.nodes.FunctionDeclarationAstNode;
 import com.cp.ast.nodes.MainAstNode;
-import com.cp.ast.nodes.ProgramAstNode;
 import com.cp.exception.VariableAlreadyDefinedException;
 import com.cp.exception.VariableNotDefinedException;
 
@@ -97,7 +96,7 @@ public class SymbolTable {
 
 		this.currentFunction = null;
 		// We are in Main, locals start at 1
-		nextVariableNumber = FIRST_VARIABLE_NUMBER+1;
+		nextVariableNumber = FIRST_VARIABLE_NUMBER + 1;
 	}
 
 	public void leaveScope() {
