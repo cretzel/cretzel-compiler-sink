@@ -37,7 +37,6 @@ public class AsmByteCodeCreator implements SimpleVisitor, Opcodes {
 	private static final String CLASS_NAME = "Main";
 
 	private final AstAnnotations annotations;
-	private int labelCounter;
 
 	private ClassWriter cw;
 	private MethodVisitor mv;
@@ -71,7 +70,6 @@ public class AsmByteCodeCreator implements SimpleVisitor, Opcodes {
 	@Override
 	public void visitFunctionDeclarations(
 			FunctionDeclarationsAstNode functionDeclarations) {
-		labelCounter = 0;
 		List<FunctionDeclarationAstNode> declarations = functionDeclarations
 				.getDeclarations();
 		for (FunctionDeclarationAstNode function : declarations) {
@@ -199,7 +197,6 @@ public class AsmByteCodeCreator implements SimpleVisitor, Opcodes {
 
 	@Override
 	public void visitParameter(ParameterAstNode parameterAstNodeImpl) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -251,7 +248,7 @@ public class AsmByteCodeCreator implements SimpleVisitor, Opcodes {
 
 		Label elseLabel = new Label();
 		Label afterLabel = new Label();
-		
+
 		mv.visitJumpInsn(IFEQ, elseLabel);
 		ifElse.getThenBlock().accept(this);
 		mv.visitJumpInsn(GOTO, afterLabel);
@@ -265,13 +262,15 @@ public class AsmByteCodeCreator implements SimpleVisitor, Opcodes {
 
 	@Override
 	public void visitErroneous(ErroneousAstNode erroneous) {
-		// TODO Auto-generated method stub
-
 	}
 
-	public void createByteCode(OutputStream outStream) throws IOException,
+	public void writeByteCode(OutputStream outStream) throws IOException,
 			Exception {
-		outStream.write(cw.toByteArray());
+		outStream.write(toByteArray());
+	}
+
+	private byte[] toByteArray() {
+		return cw.toByteArray();
 	}
 
 }

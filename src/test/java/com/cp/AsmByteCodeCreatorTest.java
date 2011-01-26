@@ -271,7 +271,7 @@ public class AsmByteCodeCreatorTest {
 		File tmpFolder = createTmpFolder();
 		File file = new File(tmpFolder, "Main.class");
 		FileOutputStream fout = new FileOutputStream(file);
-		creator.createByteCode(fout);
+		creator.writeByteCode(fout);
 		System.err.println(file.getAbsolutePath());
 		return file;
 	}
