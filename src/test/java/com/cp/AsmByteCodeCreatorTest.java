@@ -1,21 +1,16 @@
 package com.cp;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.StringReader;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 
 import junit.framework.Assert;
 
 import org.junit.Test;
+
+import util.Utils;
 
 import com.cp.ast.AstAnnotations;
 import com.cp.ast.nodes.ProgramAstNode;
@@ -35,7 +30,7 @@ public class AsmByteCodeCreatorTest {
 
 		AsmByteCodeCreator creator = newByteCodeCreator(annotations);
 		ast.accept(creator);
-		
+
 		String output = createByteCodeAndExecuteMain(creator);
 		Assert.assertEquals("12", output);
 	}
@@ -262,100 +257,19 @@ public class AsmByteCodeCreatorTest {
 	private String createByteCodeAndExecuteMain(AsmByteCodeCreator creator)
 			throws FileNotFoundException, IOException, Exception {
 		File file = createByteCode(creator);
-		String output = executeMainMethod(file);
+		String output = Utils.executeMainMethod(file);
 		return output;
 	}
 
 	private File createByteCode(AsmByteCodeCreator creator)
 			throws FileNotFoundException, IOException, Exception {
-		File tmpFolder = createTmpFolder();
+		File tmpFolder = Utils.createTmpFolder();
 		File file = new File(tmpFolder, "Main.class");
+		file.delete();
 		FileOutputStream fout = new FileOutputStream(file);
 		creator.writeByteCode(fout);
 		System.err.println(file.getAbsolutePath());
 		return file;
-	}
-
-	private File createTmpFolder() {
-		try {
-			File f = File.createTempFile("compilertmp", "");
-			f.delete();
-			f.mkdir();
-			return f;
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	private String executeMainMethod(File classFolder, String className) {
-
-		System.err.println("Executing cp: " + classFolder.getAbsolutePath()
-				+ ", class: " + className);
-
-		ClassLoader l;
-		try {
-			l = new URLClassLoader(new URL[] { classFolder.toURI().toURL() });
-		} catch (MalformedURLException e1) {
-			e1.printStackTrace();
-			throw new RuntimeException();
-		}
-
-		try {
-			Class<?> clazz = l.loadClass(className);
-			Method m = clazz.getMethod("main", (new String[0]).getClass());
-			m.setAccessible(true);
-			String out = executeMainMethod(m);
-			return out;
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		}
-
-		return null;
-	}
-
-	private static String executeMainMethod(Method m) {
-
-		// StdOut sichern und umbiegen
-		PrintStream orgOut = System.out;
-		PrintStream orgErr = System.err;
-
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		PrintStream out = new PrintStream(bos, true);
-		ByteArrayOutputStream bosErr = new ByteArrayOutputStream();
-		PrintStream err = new PrintStream(bosErr, true);
-		System.setOut(out);
-		System.setErr(err);
-
-		// Methode ausführen
-		try {
-			m.invoke(null, (Object) new String[0]);
-		} catch (InvocationTargetException e) {
-			e.getCause().printStackTrace(out);
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
-
-		// StdOut wiederherstellen
-		System.setOut(orgOut);
-		System.setErr(orgErr);
-
-		String sOut = new String(bos.toByteArray());
-		// String sErr = new String(bosErr.toByteArray());
-
-		return sOut;
-	}
-
-	private String executeMainMethod(File classFile) {
-		return executeMainMethod(classFile.getParentFile(), classFile.getName()
-				.substring(0, classFile.getName().length() - 6));
 	}
 
 }
