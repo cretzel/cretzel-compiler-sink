@@ -66,4 +66,5 @@ public class CounterTargetDump implements Opcodes {
 
 		return cw.toByteArray();
 	}
+	
 }

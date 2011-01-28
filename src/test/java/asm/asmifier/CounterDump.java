@@ -56,4 +56,5 @@ public class CounterDump implements Opcodes {
 
 		return cw.toByteArray();
 	}
+	
 }

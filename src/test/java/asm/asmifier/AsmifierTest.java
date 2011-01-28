@@ -14,9 +14,10 @@ public class AsmifierTest implements Opcodes {
 
 		ASMifierClassVisitor asmifier = new ASMifierClassVisitor(
 				new PrintWriter(System.out));
-		 //ClassReader reader = new ClassReader("asm.asmifier.Counter");
-		 ClassReader reader = new ClassReader("asm.asmifier.CounterTarget");
+		// ClassReader reader = new ClassReader("asm.asmifier.Counter");
+		ClassReader reader = new ClassReader("asm.asmifier.CounterTarget");
 		reader.accept(asmifier, ClassReader.SKIP_DEBUG);
-		
+
 	}
+	
 }

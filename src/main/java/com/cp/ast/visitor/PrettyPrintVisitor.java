@@ -188,14 +188,6 @@ public class PrettyPrintVisitor implements SimpleVisitor {
 	@Override
 	public void visitDeclaration(DeclarationAstNode declr) {
 		throw new UnsupportedOperationException();
-
-		// try {
-		// align();
-		// out.write(declr.getKind().name());
-		// println();
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// }
 	}
 
 	@Override
@@ -268,14 +260,16 @@ public class PrettyPrintVisitor implements SimpleVisitor {
 			FunctionInvocationAstNode functionInvocation) {
 		try {
 			align();
-			out.write(functionInvocation.getKind().name() + " (" + functionInvocation.getName() + ")");
+			out.write(functionInvocation.getKind().name() + " ("
+					+ functionInvocation.getName() + ")");
 			println();
 			indent();
 			align();
 			out.write("ARGUMENTS");
 			println();
 			indent();
-			List<ExpressionAstNode> arguments = functionInvocation.getArguments();
+			List<ExpressionAstNode> arguments = functionInvocation
+					.getArguments();
 			for (ExpressionAstNode arg : arguments) {
 				arg.accept(this);
 			}
@@ -284,7 +278,7 @@ public class PrettyPrintVisitor implements SimpleVisitor {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	@Override
@@ -307,10 +301,10 @@ public class PrettyPrintVisitor implements SimpleVisitor {
 	}
 
 	@Override
-	public void visitOutput(OutputAstNode outputAstNode) {
+	public void visitOutput(OutputAstNode output) {
 		try {
 			align();
-			out.write(outputAstNode.getKind().name());
+			out.write(output.getKind().name());
 			println();
 		} catch (IOException e) {
 			e.printStackTrace();
