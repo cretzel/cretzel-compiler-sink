@@ -1,0 +1,30 @@
+entity Car:
+	
+	_internal queue
+	
+	_internal receive():
+		queue ! {nextMsg, self, handleMessage}
+	
+	_internal handleMessage(msg):
+		if msg == null:
+			self ! receive
+		else:
+			self ! msg
+		
+	var _speed = 0
+		
+	speedup(speed):
+		_speed = _speed + speed
+	
+	slowdown(speed):
+		_speed = _speed - speed 	
+
+
+c = Car()
+c -> {ignite}
+c -> {speedup, 90}
+c -> {slowdown, 10}
+c -> {opendoor, FRONT_LEFT}
+
+
+	

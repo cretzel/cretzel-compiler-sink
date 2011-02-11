@@ -1,0 +1,18 @@
+class Main(a,b):
+	val c := a + b
+
+	def me(x,y,z):
+		self.a + self.c + x + y + z; 
+	
+	fun foo(a, b, c):
+		val x := 7
+		val y := x + a + b + c
+		y;
+	
+	fun main():	
+		val a := 2
+		val b := 3
+		val c := 4
+		val z := foo(a,b,c)
+	
+		out z;
